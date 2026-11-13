@@ -40,6 +40,10 @@ from librus_mcp.school_history_tools import register_school_history_tools
 from librus_mcp.send_tools import register_send_tools
 
 VERSIONS = {"mcp": __version__, "api": api_version}
+# Fork: bump when the tool catalog changes; clients such as Grok cache the
+# catalog by server name and version and do not refetch it otherwise.
+FORK_REVISION = 2
+SERVER_VERSION = f"{__version__}+fork.{FORK_REVISION}"
 _OWN_PACKAGES = ("librus_python_api", "librus_mcp")
 # Opt-in: also print the redacted page structure of a failure to stderr.
 DIAGNOSE_FAILURES = "LIBRUS_MCP_DIAGNOSE_FAILURES"
@@ -259,7 +263,7 @@ def create_server(
 
     server = NativeServer(
         "librus-mcp",
-        version=__version__,
+        version=SERVER_VERSION,
         lifespan=lifespan,
         instructions=(
             "MCP 2.x uses librus-python-api, not librus-apix. Accounts are independent logins. "

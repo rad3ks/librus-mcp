@@ -291,7 +291,12 @@ def create_server(
     register_read_tools(server)
     register_school_history_tools(server)
     register_remarks_tools(server)
-    register_message_tools(server)
+    # Fork: LIBRUS_MCP_HIDE_RECIPIENT_TOOLS=1 drops the recipient lookups while
+    # sending is off, to stay under Grok's 30-tool connector limit.
+    hide_recipients = os.environ.get("LIBRUS_MCP_HIDE_RECIPIENT_TOOLS") == "1"
+    register_message_tools(
+        server, with_recipients=config.features.send_message or not hide_recipients
+    )
     if config.features.send_message:
         register_send_tools(server)
     if config.features.attachments:

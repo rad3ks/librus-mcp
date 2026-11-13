@@ -112,3 +112,16 @@ async def test_agenda_publishes_the_years_the_api_accepts():
     for refused in (year["minimum"] - 1, year["maximum"] + 1):
         with pytest.raises(LibrusError):
             agenda_form(refused, 1)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(("features", "count"), [(None, 29), ({"send_message": True}, 36)])
+async def test_hide_recipient_tools_applies_only_while_sending_is_off(monkeypatch, features, count):
+    """Fork: LIBRUS_MCP_HIDE_RECIPIENT_TOOLS=1 keeps the catalog under 30 tools."""
+    monkeypatch.setenv("LIBRUS_MCP_HIDE_RECIPIENT_TOOLS", "1")
+    data = config_data() | ({} if features is None else {"features": features})
+    names = {tool.name for tool in await create_server(AppConfig.model_validate(data)).list_tools()}
+    assert len(names) == count
+    recipients = {"get_recipient_types", "get_recipient_choices", "get_recipients"}
+    assert (recipients <= names) is (features is not None)
+    assert "get_remarks" in names

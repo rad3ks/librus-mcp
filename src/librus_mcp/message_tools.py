@@ -41,7 +41,7 @@ from librus_mcp.runtime import Runtime
 from librus_mcp.schemas import PresentationCursor
 
 
-def register_message_tools(server: MCPServer[Runtime]) -> None:
+def register_message_tools(server: MCPServer[Runtime], *, with_recipients: bool = True) -> None:
     # Changes Librus's remembered view, never school data.
     selection = ToolAnnotations(read_only_hint=False, destructive_hint=False, open_world_hint=True)
     ordinary = ToolAnnotations(read_only_hint=True, open_world_hint=True)
@@ -52,10 +52,13 @@ def register_message_tools(server: MCPServer[Runtime]) -> None:
             read_only_hint=False, destructive_hint=True, open_world_hint=True
         ),
     )(get_message_content)
-    # Legacy accounts select a Librus messaging view for these lookups (#66).
-    server.tool(title="Recipient types", annotations=selection)(get_recipient_types)
-    server.tool(title="Recipient choices", annotations=selection)(get_recipient_choices)
-    server.tool(title="Recipients", annotations=selection)(get_recipients)
+    # Fork: recipient lookups only address outgoing messages, so they are listed
+    # only when the caller asks for them (see create_server).
+    if with_recipients:
+        # Legacy accounts select a Librus messaging view for these lookups (#66).
+        server.tool(title="Recipient types", annotations=selection)(get_recipient_types)
+        server.tool(title="Recipient choices", annotations=selection)(get_recipient_choices)
+        server.tool(title="Recipients", annotations=selection)(get_recipients)
     server.tool(title="Message correspondents", annotations=ordinary)(get_message_correspondents)
     server.tool(title="Teacher subjects", annotations=ordinary)(get_teacher_subjects)
     server.tool(title="Unread message counts", annotations=ordinary)(get_message_unread_counts)

@@ -86,6 +86,7 @@ REFUSED: Mapping[str, str] = {
     "get_agenda_detail": "needs event_ref from get_agenda",
     "get_homework_detail": "needs homework_ref from get_homework",
     "get_message_content": "needs message_ref and may mark a message read",
+    "get_remarks": "fork-only Uwagi page read with no offline fixture",
     "get_recipient_choices": "needs recipient_type from get_recipient_types",
     "get_recipients": "needs recipient_type from get_recipient_types",
     "download_attachment": "needs attachment_ref and writes a file",

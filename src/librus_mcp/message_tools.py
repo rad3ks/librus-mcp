@@ -251,8 +251,11 @@ async def get_message_content(
         raise LibrusError(ErrorKind.UNSUPPORTED_CAPABILITY)
     mark_read = allow_mark_read is True
     if message_ref.folder is MessageFolder.RECEIVED:
-        if allow_mark_read is None:
-            mark_read = not runtime.config.features.mark_read_consent
+        # Fork: without an operator consent requirement, open the message as the
+        # Librus app does even when the client passes false (Grok always does,
+        # then gives up on CONSENT_REQUIRED).
+        if not runtime.config.features.mark_read_consent:
+            mark_read = True
         if not mark_read:
             raise LibrusError(ErrorKind.CONSENT_REQUIRED)
     reference = message_ref.native()

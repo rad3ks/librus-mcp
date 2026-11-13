@@ -97,12 +97,9 @@ async def test_reference_backend_context_and_mark_read_guards_are_preflight_only
                     # Binding failures must not be hidden by missing consent.
                     # Independent account/context mutations are covered with
                     # actual message references in test_message_stdio.py.
+                    # Fork: no CONSENT_REQUIRED case here; without a consent
+                    # requirement allow_mark_read=false opens the message.
                     for ref, consent, error in (
-                        (
-                            message,
-                            False,
-                            {"code": "CONSENT_REQUIRED", "requires": "allow_mark_read"},
-                        ),
                         (message | {"backend": "legacy"}, False, {"code": "INVALID_INPUT"}),
                         (message | {"backend": "legacy"}, True, {"code": "INVALID_INPUT"}),
                     ):

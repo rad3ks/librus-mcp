@@ -65,14 +65,8 @@ async def test_paging_content_consent_directory_and_context_binding(backend):
                             "error": {"code": "INVALID_INPUT"}
                         }
                         assert len(wire.calls) == calls
-                    rejected = await session.call_tool(
-                        "get_message_content",
-                        base | {"message_ref": reference, "allow_mark_read": False},
-                    )
-                    assert rejected.is_error and closed(rejected.structured_content) == {
-                        "error": {"code": "CONSENT_REQUIRED", "requires": "allow_mark_read"}
-                    }
-                    assert len(wire.calls) == calls
+                    # Fork: without a consent requirement, allow_mark_read=false no
+                    # longer refuses; the message opens as in the app.
                     # By default a received message opens, and is marked read, as in the app.
                     opened = await session.call_tool(
                         "get_message_content", base | {"message_ref": reference}

@@ -23,6 +23,7 @@ from librus_mcp.notification_tools import register_notification_tools
 from librus_mcp.presentation import validate_window_cursor, window_page
 from librus_mcp.read_schemas import AccountAliasInput, Cursor, PageLimit, Scope
 from librus_mcp.read_tools import register_read_tools
+from librus_mcp.remarks_tools import register_remarks_tools
 from librus_mcp.runtime import Runtime, prepare_runtime
 from librus_mcp.schemas import (
     AccountAlias,
@@ -289,6 +290,7 @@ def create_server(
     server.tool(title="Attendance", annotations=session_selection)(get_attendance)
     register_read_tools(server)
     register_school_history_tools(server)
+    register_remarks_tools(server)
     register_message_tools(server)
     if config.features.send_message:
         register_send_tools(server)
